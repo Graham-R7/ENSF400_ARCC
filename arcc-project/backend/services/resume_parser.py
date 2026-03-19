@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pypdf import PdfReader
 from docx import Document
 
@@ -28,3 +29,21 @@ def parse_resume_file(path):
         "experience": [],
         "education": [],
     }
+
+
+def parse_resume(file_obj):
+    """
+    Compatibility wrapper used by current resume route.
+    Saves uploaded file to a temp file, parses by extension, then deletes temp file.
+    """
+    filename = getattr(file_obj, "filename", "") or "resume.txt"
+    ext = os.path.splitext(filename)[1].lower() or ".txt"
+
+    fd, temp_path = tempfile.mkstemp(suffix=ext)
+    os.close(fd)
+    try:
+        file_obj.save(temp_path)
+        return parse_resume_file(temp_path)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)

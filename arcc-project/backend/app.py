@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from config import Config
 from routes.auth_routes import auth_bp
 from routes.resume_routes import resume_bp
 from routes.analysis_routes import analysis_bp
@@ -19,4 +20,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=Config.PORT, debug=True)

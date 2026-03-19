@@ -13,5 +13,5 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "arcc")
 
     LLM_API_KEY = os.getenv("LLM_API_KEY", "")
-    LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-    LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
+    LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/")
+    LLM_MODEL = os.getenv("LLM_MODEL", "gemini-1.5-flash")
