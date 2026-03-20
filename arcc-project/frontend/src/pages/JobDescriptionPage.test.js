@@ -1,5 +1,6 @@
 import React from "react";
 import JobDescriptionPage from "./JobDescriptionPage";
+import { WorkflowProvider } from "../context/WorkflowContext";
 import {
   changeValue,
   click,
@@ -22,7 +23,11 @@ describe("JobDescriptionPage", () => {
   });
 
   it("submits the entered job title and description", async () => {
-    view = renderWithRoot(<JobDescriptionPage />);
+    view = renderWithRoot(
+      <WorkflowProvider>
+        <JobDescriptionPage />
+      </WorkflowProvider>,
+    );
 
     const titleInput = view.container.querySelector('input[placeholder="Job Title"]');
     const descriptionInput = view.container.querySelector(

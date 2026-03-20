@@ -7,6 +7,7 @@ import ResultsPage from "./pages/ResultsPage";
 import InterviewPage from "./pages/InterviewPage";
 import DashboardPage from "./pages/DashboardPage";
 import Layout from "./components/Layout";
+import { WorkflowProvider } from "./context/WorkflowContext";
 import "./styles/main.css";
 
 const THEME_STORAGE_KEY = "arcc-theme";
@@ -36,16 +37,18 @@ function App() {
 
   return (
     <Router>
-      <Layout theme={theme} onToggleTheme={toggleTheme}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/upload" element={<UploadResumePage />} />
-          <Route path="/job" element={<JobDescriptionPage />} />
-          <Route path="/results" element={<ResultsPage />} />
-          <Route path="/interview" element={<InterviewPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-        </Routes>
-      </Layout>
+      <WorkflowProvider>
+        <Layout theme={theme} onToggleTheme={toggleTheme}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/upload" element={<UploadResumePage />} />
+            <Route path="/job" element={<JobDescriptionPage />} />
+            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/interview" element={<InterviewPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Routes>
+        </Layout>
+      </WorkflowProvider>
     </Router>
   );
 }
