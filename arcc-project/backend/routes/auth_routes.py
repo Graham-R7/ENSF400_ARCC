@@ -19,9 +19,10 @@ def register():
     if not email or not password:
         return jsonify({"error": "Email and Password are required"}), 400
 
-    conn = get_conn()
-    cur = conn.cursor(dictionary=True)
+    conn, cur = None, None
     try:
+        conn = get_conn()
+        cur = conn.cursor(dictionary=True)
         cur.execute("SELECT id FROM users WHERE email=%s", (email,))
         if cur.fetchone():
             return jsonify({"error": "Email already exists - Please Login!"}), 409
@@ -33,9 +34,14 @@ def register():
         )
         conn.commit()
         return jsonify({"user_id": cur.lastrowid, "email": email}), 201
+    except Exception:
+        return jsonify({"error": "Database error"}), 500
     finally:
-        cur.close()
-        conn.close()
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
 
 # Login
 @auth_bp.route("/login", methods=["POST"])
@@ -44,17 +50,22 @@ def login():
     email = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
 
-    conn = get_conn()
-    cur = conn.cursor(dictionary=True)
+    conn, cur = None, None
     try:
+        conn = get_conn()
+        cur = conn.cursor(dictionary=True)
         cur.execute(
             "SELECT id, email, password_hash FROM users WHERE email=%s", (email,)
         )
         user = cur.fetchone()
         if not user or not check_password_hash(user["password_hash"], password):
-            return jsonify({"error": "invalid credentials"}), 401
+            return jsonify({"error": "Invalid credentials"}), 401
 
         return jsonify({"user_id": user["id"], "email": user["email"]})
+    except Exception:
+        return jsonify({"error": "Database error"}), 500
     finally:
-        cur.close()
-        conn.close()
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()

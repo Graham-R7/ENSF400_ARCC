@@ -81,3 +81,35 @@ def upload_resume():
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
+
+
+@resume_bp.route("/<int:resume_id>", methods=["GET"])
+def get_resume(resume_id):
+    conn, cur = None, None
+    try:
+        conn = get_conn()
+        cur = conn.cursor(dictionary=True)
+        cur.execute(
+            "SELECT id, user_id, filename, text_content, created_at"
+            " FROM resumes WHERE id = %s",
+            (resume_id,),
+        )
+        row = cur.fetchone()
+        if not row:
+            return jsonify({"error": "resume not found"}), 404
+
+        return jsonify({
+            "resume_id": row["id"],
+            "user_id": row["user_id"],
+            "filename": row["filename"],
+            "preview": (row["text_content"] or "")[:500],
+            "created_at": str(row["created_at"]),
+        })
+    except Exception:
+        logger.exception("DB error fetching resume_id=%s", resume_id)
+        return jsonify({"error": "Database error"}), 500
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
