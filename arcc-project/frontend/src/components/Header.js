@@ -11,12 +11,10 @@ const Header = ({ theme, onToggleTheme }) => {
         onClick={onToggleTheme}
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >
-        <span className="theme-toggle__icon" aria-hidden="true">
-          {theme === "light" ? "Dark" : "Light"}
+        <span className="theme-toggle__track" aria-hidden="true">
+          <span className="theme-toggle__thumb" />
         </span>
-        <span className="theme-toggle__label">
-          {theme === "light" ? "Dark mode" : "Light mode"}
-        </span>
+        <span className="theme-toggle__label">{theme === "light" ? "Light mode" : "Dark mode"}</span>
       </button>
     </header>
   );
