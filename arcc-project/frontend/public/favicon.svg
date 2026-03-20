@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="arccFavBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f5eff" />
+      <stop offset="100%" stop-color="#18a999" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#arccFavBg)" />
+  <path
+    d="M32 16 46 48h-8l-2.8-6.8H28.8L26 48h-8l14-32Zm0 11.7-4.2 10.2h8.4L32 27.7Z"
+    fill="#ffffff"
+  />
+</svg>
