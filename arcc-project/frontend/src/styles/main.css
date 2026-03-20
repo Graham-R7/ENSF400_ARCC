@@ -136,14 +136,6 @@ textarea:focus-visible {
   left: -120px;
 }
 
-.app-backdrop--two {
-  width: 280px;
-  height: 280px;
-  background: rgba(243, 182, 63, 0.1);
-  right: -80px;
-  bottom: 120px;
-}
-
 .header {
   background: linear-gradient(
     135deg,

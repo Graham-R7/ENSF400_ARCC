@@ -7,7 +7,6 @@ const Layout = ({ children, theme, onToggleTheme }) => {
   return (
     <div className="layout">
       <div className="app-backdrop app-backdrop--one" />
-      <div className="app-backdrop app-backdrop--two" />
       <Header theme={theme} onToggleTheme={onToggleTheme} />
       <div className="main-content">
         <Sidebar />
