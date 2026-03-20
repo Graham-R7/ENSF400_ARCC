@@ -14,7 +14,7 @@ def get_resume_suggestions(resume_text, job_description):
     {job_description}
     """
 
-    #future OpenAI call
+    #future Gemini call
 
     return {
         "suggestions": [
