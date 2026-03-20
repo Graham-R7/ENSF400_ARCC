@@ -6,10 +6,10 @@
 }
 
 .header {
-  background-color: #333;
+  background: linear-gradient(135deg, #0d1b3d 0%, #143f7a 55%, #18a999 100%);
   color: white;
-  padding: 1rem;
-  text-align: center;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 10px 25px rgba(6, 44, 102, 0.18);
 }
 
 .main-content {
@@ -40,13 +40,55 @@
 .content {
   flex: 1;
   padding: 1rem;
+  background: linear-gradient(180deg, #f6fbff 0%, #ffffff 100%);
 }
 
 .footer {
-  background-color: #333;
+  background-color: #0d1b3d;
   color: white;
   text-align: center;
   padding: 1rem;
+}
+
+.arcc-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.arcc-logo__mark {
+  display: block;
+  flex-shrink: 0;
+}
+
+.arcc-logo__wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.arcc-logo__title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.arcc-logo__tagline {
+  font-size: 0.92rem;
+  opacity: 0.9;
+}
+
+.hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.hero-brand__caption {
+  margin: 0;
+  color: #35507a;
+  font-weight: 500;
 }
 
 /* Components */
@@ -76,4 +118,18 @@
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 640px) {
+  .arcc-logo__title {
+    font-size: 1.4rem;
+  }
+
+  .arcc-logo__tagline {
+    font-size: 0.8rem;
+  }
+
+  .hero-brand {
+    align-items: flex-start;
+  }
 }

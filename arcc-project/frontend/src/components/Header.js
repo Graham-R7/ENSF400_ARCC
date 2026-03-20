@@ -1,9 +1,10 @@
 import React from "react";
+import ARCCLogo from "./ARCCLogo";
 
 const Header = () => {
   return (
     <header className="header">
-      <h1>ARCC - AI Resume and Career Coach</h1>
+      <ARCCLogo size={58} />
     </header>
   );
 };
