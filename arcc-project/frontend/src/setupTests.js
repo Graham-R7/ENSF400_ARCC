@@ -1,8 +1,8 @@
-global.IS_REACT_ACT_ENVIRONMENT = true;
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 if (typeof TextEncoder === "undefined") {
-  const { TextEncoder, TextDecoder } = require("util");
+  const { TextEncoder, TextDecoder } = require("node:util");
 
-  global.TextEncoder = TextEncoder;
-  global.TextDecoder = TextDecoder;
+  globalThis.TextEncoder = TextEncoder;
+  globalThis.TextDecoder = TextDecoder;
 }
