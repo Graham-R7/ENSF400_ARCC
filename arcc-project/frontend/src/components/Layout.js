@@ -6,7 +6,6 @@ import Footer from "./Footer";
 const Layout = ({ children, theme, onToggleTheme }) => {
   return (
     <div className="layout">
-      <div className="app-backdrop app-backdrop--one" />
       <Header theme={theme} onToggleTheme={onToggleTheme} />
       <div className="main-content">
         <Sidebar />

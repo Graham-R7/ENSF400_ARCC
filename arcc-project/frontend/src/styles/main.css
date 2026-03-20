@@ -10,7 +10,7 @@
   --brand-deep: #0d1b3d;
   --brand-mint: #18a999;
   --brand-gold: #f3b63f;
-  --shadow: 0 18px 38px rgba(39, 84, 138, 0.12);
+  --shadow: 0 10px 24px rgba(39, 84, 138, 0.1);
   --header-grad-start: #16345c;
   --header-grad-mid: #24508d;
   --header-grad-end: #1aa39a;
@@ -47,7 +47,7 @@
   --brand-deep: #dfeeff;
   --brand-mint: #41d7be;
   --brand-gold: #ffd36c;
-  --shadow: 0 20px 45px rgba(2, 6, 23, 0.35);
+  --shadow: 0 12px 28px rgba(2, 6, 23, 0.3);
   --header-grad-start: #050914;
   --header-grad-mid: #12233f;
   --header-grad-end: #154f68;
@@ -81,9 +81,7 @@ body {
   font-family: "Manrope", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   background:
-    radial-gradient(circle at top left, rgba(72, 198, 239, 0.12), transparent 28%),
-    radial-gradient(circle at 78% 12%, rgba(31, 94, 255, 0.1), transparent 24%),
-    radial-gradient(circle at 96% 72%, rgba(243, 182, 63, 0.1), transparent 18%),
+    radial-gradient(circle at top left, rgba(72, 198, 239, 0.08), transparent 30%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-end) 100%);
   transition: background-color 180ms ease, color 180ms ease;
 }
@@ -118,22 +116,6 @@ textarea:focus-visible {
   flex-direction: column;
   min-height: 100vh;
   position: relative;
-  overflow: hidden;
-}
-
-.app-backdrop {
-  position: absolute;
-  border-radius: 999px;
-  pointer-events: none;
-  opacity: 0.75;
-}
-
-.app-backdrop--one {
-  width: 320px;
-  height: 320px;
-  background: rgba(72, 198, 239, 0.1);
-  top: 90px;
-  left: -120px;
 }
 
 .header {
@@ -145,7 +127,7 @@ textarea:focus-visible {
   );
   color: white;
   padding: 1.1rem 1.75rem;
-  box-shadow: 0 10px 25px rgba(6, 44, 102, 0.18);
+  box-shadow: 0 4px 14px rgba(6, 44, 102, 0.16);
   position: sticky;
   top: 0;
   z-index: 3;
@@ -204,36 +186,12 @@ textarea:focus-visible {
   border-radius: 16px;
   background: var(--sidebar-link-bg);
   border: 1px solid var(--sidebar-link-border);
-  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease;
 }
 
 .sidebar__nav a:hover {
-  transform: translateX(4px);
   background: var(--sidebar-link-hover);
   border-color: rgba(72, 198, 239, 0.45);
-}
-
-.sidebar__panel {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(72, 198, 239, 0.16), rgba(255, 255, 255, 0.06));
-  border: 1px solid rgba(72, 198, 239, 0.24);
-}
-
-.sidebar__panel-label {
-  display: inline-block;
-  margin-bottom: 0.4rem;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: rgba(231, 240, 255, 0.68);
-}
-
-.sidebar__panel p {
-  margin-bottom: 0;
-  font-size: 0.94rem;
-  color: rgba(231, 240, 255, 0.86);
 }
 
 .content {
@@ -329,7 +287,6 @@ textarea:focus-visible {
 
 .page {
   max-width: 1100px;
-  animation: pageRise 420ms ease;
 }
 
 .page--home {
@@ -355,23 +312,11 @@ textarea:focus-visible {
   position: relative;
   padding: 1.9rem;
   border-radius: 28px;
-  background:
-    linear-gradient(135deg, var(--hero-start), var(--hero-end)),
-    linear-gradient(135deg, rgba(24, 169, 153, 0.14), rgba(72, 198, 239, 0.12));
+  background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
   color: var(--hero-text);
   box-shadow: var(--shadow);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.hero-card::after {
-  content: "";
-  position: absolute;
-  inset: auto -40px -80px auto;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(243, 182, 63, 0.2), transparent 70%);
 }
 
 .hero-brand {
@@ -462,13 +407,13 @@ textarea:focus-visible {
   font-family: "Space Grotesk", "Segoe UI", Helvetica, Arial, sans-serif;
   font-weight: 700;
   letter-spacing: 0.01em;
-  box-shadow: 0 10px 18px rgba(31, 94, 255, 0.18);
+  box-shadow: 0 6px 14px rgba(31, 94, 255, 0.16);
   transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
 }
 
 .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 22px rgba(31, 94, 255, 0.22);
+  box-shadow: 0 8px 16px rgba(31, 94, 255, 0.18);
 }
 
 .btn:disabled {
@@ -540,7 +485,7 @@ textarea:focus-visible {
 
 .card {
   border: 1px solid var(--line);
-  border-radius: 24px;
+  border-radius: 18px;
   padding: 1.35rem;
   margin-bottom: 1rem;
   box-shadow: var(--shadow);
@@ -562,7 +507,7 @@ textarea:focus-visible {
 :root:not([data-theme="dark"]) .feature-card,
 :root:not([data-theme="dark"]) .info-card {
   border-color: rgba(36, 80, 141, 0.08);
-  box-shadow: 0 14px 32px rgba(39, 84, 138, 0.08);
+  box-shadow: 0 8px 22px rgba(39, 84, 138, 0.08);
 }
 
 :root:not([data-theme="dark"]) .page-intro,
@@ -659,17 +604,6 @@ textarea:focus-visible {
 :root[data-theme="dark"] .btn--outline {
   border-color: rgba(184, 205, 238, 0.2);
   color: #edf4ff;
-}
-
-@keyframes pageRise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

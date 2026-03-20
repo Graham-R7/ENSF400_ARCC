@@ -27,11 +27,6 @@ const Sidebar = () => {
           ))}
         </ul>
       </nav>
-      <div className="sidebar__panel">
-        <span className="sidebar__panel-label">Today</span>
-        <strong>1 resume review</strong>
-        <p>2 interview drills ready when you are.</p>
-      </div>
     </aside>
   );
 };
