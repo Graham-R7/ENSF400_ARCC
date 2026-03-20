@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 const Footer = () => {
   return (
     <footer className="footer">
-      <p>&copy; 2024 ARCC Project</p>
+      <p>ARCC helps students and early-career professionals sharpen every application step.</p>
     </footer>
   );
 };

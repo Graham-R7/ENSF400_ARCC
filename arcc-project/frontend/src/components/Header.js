@@ -1,9 +1,21 @@
 import React from "react";
+import ARCCLogo from "./ARCCLogo";
 
-const Header = () => {
+const Header = ({ theme, onToggleTheme }) => {
   return (
     <header className="header">
-      <h1>ARCC - AI Resume and Career Coach</h1>
+      <ARCCLogo size={58} />
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={onToggleTheme}
+        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      >
+        <span className="theme-toggle__track" aria-hidden="true">
+          <span className="theme-toggle__thumb" />
+        </span>
+        <span className="theme-toggle__label">{theme === "light" ? "Light mode" : "Dark mode"}</span>
+      </button>
     </header>
   );
 };

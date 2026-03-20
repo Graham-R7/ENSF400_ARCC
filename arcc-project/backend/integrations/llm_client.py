@@ -194,6 +194,7 @@ def pack_analysis_for_db(payload: dict) -> str:
         ensure_ascii=False,
     )
 
+    #future Gemini call
 
 def unpack_analysis_from_db(raw: str | None) -> dict:
     # Reverse pack_analysis_for_db; supports older rows that only stored plain lines.
