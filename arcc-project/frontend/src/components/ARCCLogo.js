@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useId } from "react";
 
 const ARCCLogo = ({ size = 56, showWordmark = true }) => {
+  const logoId = useId().replace(/:/g, "");
+  const bgGradientId = `${logoId}-bg`;
+  const arcGradientId = `${logoId}-arc`;
+
   return (
     <div className="arcc-logo" aria-label="ARCC logo">
       <svg
@@ -12,47 +16,62 @@ const ARCCLogo = ({ size = 56, showWordmark = true }) => {
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="arccLogoGradient" x1="10%" y1="10%" x2="90%" y2="90%">
-            <stop offset="0%" stopColor="#48c6ef" />
-            <stop offset="100%" stopColor="#1f5eff" />
+          <linearGradient id={bgGradientId} x1="8%" y1="8%" x2="92%" y2="92%">
+            <stop offset="0%" stopColor="#0f2b62" />
+            <stop offset="56%" stopColor="#1f5eff" />
+            <stop offset="100%" stopColor="#12958d" />
+          </linearGradient>
+          <linearGradient id={arcGradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#7ed9ff" />
+            <stop offset="100%" stopColor="#4db7ff" />
           </linearGradient>
         </defs>
-        <rect x="8" y="8" width="72" height="72" rx="22" fill="url(#arccLogoGradient)" />
-        <path
-          d="M27 26h24c6.6 0 12 5.4 12 12v18c0 3.3-2.7 6-6 6H39c-6.6 0-12-5.4-12-12V26Z"
-          fill="#f8fbff"
-          opacity="0.96"
-        />
-        <path d="M51 26v8c0 3.3 2.7 6 6 6h6" fill="none" stroke="#cfe3ff" strokeWidth="4" />
-        <path d="M34 41h20" stroke="#1f5eff" strokeWidth="4" strokeLinecap="round" />
-        <path d="M34 49h16" stroke="#18a999" strokeWidth="4" strokeLinecap="round" />
-        <path d="M34 57h12" stroke="#f3b63f" strokeWidth="4" strokeLinecap="round" />
-        <path
-          d="M63 57c0 8.3-6.7 15-15 15"
+
+        <rect x="8" y="8" width="72" height="72" rx="20" fill={`url(#${bgGradientId})`} />
+        <rect
+          x="9.5"
+          y="9.5"
+          width="69"
+          height="69"
+          rx="18.5"
           fill="none"
-          stroke="#062c66"
-          strokeWidth="5"
-          strokeLinecap="round"
+          stroke="rgba(255,255,255,0.18)"
         />
+
         <path
-          d="M66 45c7.2 0 13 5.8 13 13S73.2 71 66 71"
+          d="M22 64 37 24h8l15 40h-8.6l-3.2-9H33.8L30.6 64H22Zm14.7-16.2h8.6L41 35.2l-4.3 12.6Z"
+          fill="#ffffff"
+        />
+
+        <path
+          d="M68 31A13 13 0 1 0 68 57"
           fill="none"
-          stroke="#062c66"
-          strokeWidth="5"
+          stroke={`url(#${arcGradientId})`}
+          strokeWidth="4.8"
           strokeLinecap="round"
         />
-        <circle cx="65" cy="24" r="5" fill="#f3b63f" />
         <path
-          d="M65 15v5M65 28v5M56 24h5M69 24h5"
-          stroke="#f3b63f"
-          strokeWidth="3"
+          d="M64 36A8 8 0 1 0 64 52"
+          fill="none"
+          stroke="#8ad9ff"
+          strokeWidth="3.2"
           strokeLinecap="round"
+        />
+
+        <path
+          d="M42.5 25.5 47.7 20.3M47.7 20.3h-4M47.7 20.3v4"
+          fill="none"
+          stroke="#ffd064"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
+
       {showWordmark ? (
         <div className="arcc-logo__wordmark">
           <span className="arcc-logo__title">ARCC</span>
-          <span className="arcc-logo__tagline">AI Resume and Career Coach</span>
+          <span className="arcc-logo__tagline">AI Resume &amp; Career Coach</span>
         </div>
       ) : null}
     </div>
