@@ -13,21 +13,25 @@ const JobDescriptionPage = () => {
   };
 
   return (
-    <div>
+    <div className="page">
+      <p className="eyebrow">Step 2</p>
       <h1>Job Description</h1>
-      <Card>
+      <Card className="feature-card">
         <h2>Enter Job Details</h2>
+        <p className="page-intro">
+          Paste the role title and description so ARCC can tailor resume feedback to the job.
+        </p>
         <Input
           placeholder="Job Title"
           value={jobTitle}
           onChange={(e) => setJobTitle(e.target.value)}
         />
         <textarea
+          className="textarea"
           placeholder="Job Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows="10"
-          style={{ width: "100%", padding: "0.5rem", margin: "0.5rem 0" }}
         />
         <Button onClick={handleSubmit}>Submit</Button>
       </Card>

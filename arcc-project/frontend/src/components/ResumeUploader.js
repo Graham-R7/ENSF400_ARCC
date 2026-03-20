@@ -63,17 +63,21 @@ export default function ResumeUploader() {
   };
 
   return (
-    <Card>
+    <Card className="feature-card">
       <h2>Upload Resume</h2>
-      <input
-        type="file"
-        accept=".pdf,.docx"
-        onChange={handleFileChange}
-        disabled={uploading}
-      />
-      {file && <p>Selected: {file.name}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
+      <p className="page-intro">Supported formats: PDF and DOCX, up to 5MB.</p>
+      <label className="file-input">
+        <span>Choose file</span>
+        <input
+          type="file"
+          accept=".pdf,.docx"
+          onChange={handleFileChange}
+          disabled={uploading}
+        />
+      </label>
+      {file && <p className="status-text">Selected: {file.name}</p>}
+      {error && <p className="status-text status-text--error">{error}</p>}
+      {message && <p className="status-text status-text--success">{message}</p>}
       <Button onClick={handleUpload} disabled={uploading || !file}>
         {uploading ? "Uploading..." : "Upload"}
       </Button>
