@@ -11,6 +11,8 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       DB_NAME: arcc
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
 
@@ -18,12 +20,12 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+    stdin_open: true
+    tty: true
     depends_on:
       - backend
     environment:
       REACT_APP_API_BASE: http://localhost:5000/api
-    volumes:
-      - ./frontend:/app
 
   database:
     image: mysql:8

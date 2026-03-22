@@ -35,6 +35,8 @@ export default function ResumeUploader() {
   };
 
   const handleUpload = async () => {
+    if (!file) return;
+
     const validationError = validateResumeFile(file);
     if (validationError) {
       setError(validationError);
@@ -47,18 +49,23 @@ export default function ResumeUploader() {
     setMessage("");
 
     const progressTimer = setInterval(() => {
-      setUploadProgress((currentProgress) => (currentProgress >= 90 ? currentProgress : currentProgress + 12));
+      setUploadProgress((p) => (p >= 90 ? p : p + 12));
     }, 180);
 
     try {
       const result = await uploadResume(file);
       setUploadProgress(100);
-      setResumeUploadResult({
-        fileName: file.name,
-        parsedData: result?.data,
-      });
+
+      const resumeId = result?.data?.resume_id || result?.resume_id; // depending on API
+      if (!resumeId) throw new Error("No resume ID returned from server");
+
+      // Save resume info in context + localStorage for downstream usage
+      const resumeData = { fileName: file.name, resumeId, parsedData: result?.data };
+      setResumeUploadResult(resumeData);
+      localStorage.setItem("resume_id", resumeId);
+
       setMessage("Resume uploaded successfully!");
-      console.log(result);
+      console.log("Resume upload result:", result);
     } catch (err) {
       setError("Upload failed. Please try again.");
       console.error(err);
@@ -71,7 +78,7 @@ export default function ResumeUploader() {
   return (
     <Card className="feature-card">
       <h2>Upload Resume</h2>
-      <p className="page-intro">Supported formats: PDF and DOCX, up to 5MB.</p>
+      <p className="page-intro">Supported formats: PDF and DOCX, up to 4MB.</p>
       <label className="file-input" htmlFor="resume-file">
         <span id="resume-file-help">Choose file</span>
         <input
@@ -84,7 +91,8 @@ export default function ResumeUploader() {
           aria-describedby="resume-file-help resume-upload-status"
         />
       </label>
-      {uploading ? (
+
+      {uploading && (
         <div className="upload-progress-wrap" aria-live="polite">
           <div
             className="upload-progress"
@@ -97,20 +105,24 @@ export default function ResumeUploader() {
           </div>
           <p className="status-text status-text--info">{uploadProgress}% uploaded</p>
         </div>
-      ) : null}
+      )}
+
       {file && <p className="status-text">Selected: {file.name}</p>}
+
       <div id="resume-upload-status" aria-live="polite">
         {error && <p className="status-text status-text--error">{error}</p>}
         {message && <p className="status-text status-text--success">{message}</p>}
       </div>
+
       <Button onClick={handleUpload} disabled={uploading || !file}>
         {uploading ? "Uploading..." : "Upload"}
       </Button>
-      {message ? (
+
+      {message && (
         <a className="btn btn--outline btn--as-link" href="/job">
           Continue to Job Description
         </a>
-      ) : null}
+      )}
     </Card>
   );
 }

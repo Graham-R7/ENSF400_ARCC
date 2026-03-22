@@ -13,16 +13,36 @@ logger = logging.getLogger(__name__)
 
 analysis_bp = Blueprint("analysis", __name__)
 
+def extract_job_title(description: str) -> str:
+    """
+    Extract a readable title from the job description.
+
+    Strategy:
+    - Take first non-empty line
+    - Remove common prefixes
+    - Truncate for UI safety
+    """
+    if not description:
+        return "Untitled Role"
+
+    lines = [line.strip() for line in description.split("\n") if line.strip()]
+    if not lines:
+        return "Untitled Role"
+
+    first = lines[0]
+
+    first = first.replace("Specific Job Description :", "").strip()
+
+    return first[:80]
 
 @analysis_bp.route("/health", methods=["GET"])
 def analysis_health():
     return jsonify({"status": "ok", "module": "analysis"})
 
-
 @analysis_bp.route("/run", methods=["POST"])
 def run_analysis():
     """
-    Option B — DB-backed analysis (Phase 2: hybrid overlap + Gemini).
+    Runs resume vs job analysis.
 
     Request JSON:
         resume_id       (int, required)
@@ -34,11 +54,12 @@ def run_analysis():
         matched_skills, missing_skills, suggestions
     """
     data = request.get_json(silent=True) or {}
+
     resume_id = data.get("resume_id")
     job_description = (data.get("job_description") or "").strip()
     user_id = data.get("user_id")
 
-    if resume_id is None or resume_id == "" or not job_description:
+    if resume_id in (None, "") or not job_description:
         return jsonify({"error": "resume_id and job_description are required"}), 400
 
     try:
@@ -57,8 +78,13 @@ def run_analysis():
     try:
         conn = get_conn()
         cur = conn.cursor(dictionary=True)
-        cur.execute("SELECT id, text_content FROM resumes WHERE id=%s", (resume_id,))
+
+        cur.execute(
+            "SELECT id, text_content FROM resumes WHERE id=%s",
+            (resume_id,),
+        )
         resume = cur.fetchone()
+
         if not resume:
             return jsonify({"error": "resume not found"}), 404
 
@@ -79,12 +105,21 @@ def run_analysis():
         job_id = cur.lastrowid
 
         suggestions_blob = pack_analysis_for_db(payload)
+
         cur.execute(
-            "INSERT INTO analysis_results (resume_id, job_id, match_score, suggestions) "
-            "VALUES (%s, %s, %s, %s)",
-            (resume_id, job_id, float(payload["match_score"]), suggestions_blob),
+            """
+            INSERT INTO analysis_results (resume_id, job_id, match_score, suggestions)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (
+                resume_id,
+                job_id,
+                float(payload["match_score"]),
+                suggestions_blob,
+            ),
         )
         analysis_id = cur.lastrowid
+
         conn.commit()
 
         return jsonify({
@@ -105,12 +140,12 @@ def run_analysis():
             except Exception:
                 pass
         return jsonify({"error": "Database error"}), 500
-    finally:
-        if cur is not None:
-            cur.close()
-        if conn is not None:
-            conn.close()
 
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 @analysis_bp.route("/<int:analysis_id>", methods=["GET"])
 def get_analysis(analysis_id):
@@ -118,6 +153,7 @@ def get_analysis(analysis_id):
     try:
         conn = get_conn()
         cur = conn.cursor(dictionary=True)
+
         cur.execute(
             """
             SELECT ar.id, ar.resume_id, ar.job_id, ar.match_score, ar.suggestions,
@@ -128,6 +164,7 @@ def get_analysis(analysis_id):
             """,
             (analysis_id,),
         )
+
         row = cur.fetchone()
         if not row:
             return jsonify({"error": "analysis not found"}), 404
@@ -144,44 +181,40 @@ def get_analysis(analysis_id):
             "missing_skills": unpacked["missing_skills"],
             "suggestions": unpacked["suggestions"],
         })
+
     except Exception:
         logger.exception("Database error fetching analysis_id=%s", analysis_id)
         return jsonify({"error": "Database error"}), 500
-    finally:
-        if cur is not None:
-            cur.close()
-        if conn is not None:
-            conn.close()
 
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 @analysis_bp.route("/history", methods=["GET"])
 def get_history():
     """
-    Phase 6 — Dashboard history.
+    Demo-friendly history endpoint (no user filtering).
 
     Query params:
-        user_id  (int, required) — pass a real user_id or a fixed demo
-                                   value (e.g. 0) for anonymous demos.
-        limit    (int, optional) — max rows to return, default 20, max 100.
+        limit (int, optional, default=20, max=100)
 
-    Response JSON (200):
-        { "user_id": int, "count": int, "history": [ ... ] }
-
-    Each history item:
-        analysis_id, resume_id, job_id, match_score,
-        filename, job_snippet (first 120 chars), created_at
+    Response:
+        {
+          count,
+          history: [
+            analysis_id,
+            resume_id,
+            job_id,
+            match_score,
+            filename,
+            job_title,
+            created_at
+          ]
+        }
     """
-    raw_user_id = request.args.get("user_id", "")
-    raw_limit   = request.args.get("limit", "20")
-
-    # Anonymous / no user_id → return empty history, not an error
-    if raw_user_id in (None, ""):
-        return jsonify({"user_id": None, "count": 0, "history": []})
-
-    try:
-        user_id = int(raw_user_id)
-    except (TypeError, ValueError):
-        return jsonify({"error": "user_id must be an integer"}), 400
+    raw_limit = request.args.get("limit", "20")
 
     try:
         limit = max(1, min(int(raw_limit), 100))
@@ -192,10 +225,11 @@ def get_history():
     try:
         conn = get_conn()
         cur = conn.cursor(dictionary=True)
+
         cur.execute(
             """
             SELECT
-                ar.id          AS analysis_id,
+                ar.id AS analysis_id,
                 ar.resume_id,
                 ar.job_id,
                 ar.match_score,
@@ -203,40 +237,40 @@ def get_history():
                 r.filename,
                 jd.description AS job_description
             FROM analysis_results ar
-            JOIN resumes          r  ON r.id  = ar.resume_id
+            JOIN resumes r ON r.id = ar.resume_id
             JOIN job_descriptions jd ON jd.id = ar.job_id
-            WHERE jd.user_id = %s OR r.user_id = %s
             ORDER BY ar.created_at DESC
             LIMIT %s
             """,
-            (user_id, user_id, limit),
+            (limit,),
         )
+
         rows = cur.fetchall()
 
         history = [
             {
                 "analysis_id": row["analysis_id"],
-                "resume_id":   row["resume_id"],
-                "job_id":      row["job_id"],
-                "match_score": row["match_score"],
-                "filename":    row["filename"],
-                "job_snippet": (row["job_description"] or "")[:120],
-                "created_at":  str(row["created_at"]),
+                "resume_id": row["resume_id"],
+                "job_id": row["job_id"],
+                "match_score": float(row["match_score"]),
+                "filename": row["filename"],
+                "job_title": extract_job_title(row["job_description"]),
+                "created_at": str(row["created_at"]),
             }
             for row in rows
         ]
 
         return jsonify({
-            "user_id": user_id,
-            "count":   len(history),
+            "count": len(history),
             "history": history,
         })
 
     except Exception:
-        logger.exception("Database error fetching history for user_id=%s", user_id)
+        logger.exception("Database error fetching history")
         return jsonify({"error": "Database error"}), 500
+
     finally:
-        if cur is not None:
+        if cur:
             cur.close()
-        if conn is not None:
+        if conn:
             conn.close()

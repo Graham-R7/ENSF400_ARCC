@@ -1,13 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useWorkflow } from "../context/WorkflowContext";
 
 const Sidebar = () => {
+  // ✅ Move hook inside the component
+  const { analysisId } = useWorkflow();
+
+  const storedAnalysisId = localStorage.getItem("analysis_id");
+
   const links = [
     { to: "/", label: "Home" },
     { to: "/dashboard", label: "Dashboard" },
     { to: "/upload", label: "Upload Resume" },
     { to: "/job", label: "Job Description" },
-    { to: "/results", label: "Results" },
+    { to: "/history", label: "Results" },
     { to: "/interview", label: "Interview" },
   ];
 

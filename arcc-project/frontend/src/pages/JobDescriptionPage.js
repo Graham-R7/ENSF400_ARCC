@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { useWorkflow } from "../context/WorkflowContext";
 import { validateRequiredText } from "../utils/validation";
+import { runAnalysis } from "../services/api";
 
 const JobDescriptionPage = () => {
   const { resumeUpload, jobDetails, setJobDetails } = useWorkflow();
@@ -11,8 +13,9 @@ const JobDescriptionPage = () => {
   const [description, setDescription] = useState(jobDetails.description || "");
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const nextErrors = {
@@ -22,16 +25,31 @@ const JobDescriptionPage = () => {
 
     const hasErrors = Object.values(nextErrors).some(Boolean);
     setErrors(nextErrors);
-
     if (hasErrors) {
       setMessage("");
       return;
     }
 
-    const payload = { jobTitle: jobTitle.trim(), description: description.trim() };
-    setJobDetails(payload);
-    setMessage("Job details saved. You can continue to Results.");
-    console.log({ jobTitle, description });
+    if (!resumeUpload?.resumeId && !localStorage.getItem("resume_id")) {
+      setMessage("Please upload a resume first.");
+      return;
+    }
+
+    const resumeId = resumeUpload?.resumeId || localStorage.getItem("resume_id");
+
+    try {
+      const analysisResult = await runAnalysis(resumeId, description, null);
+      const analysisId = analysisResult?.analysis_id || analysisResult?.data?.analysis_id;
+      if (!analysisId) throw new Error("No analysis ID returned from server");
+
+      setJobDetails({ jobTitle: jobTitle.trim(), description: description.trim(), analysisId });
+      setMessage("Analysis started. Redirecting to results...");
+
+      navigate(`/results/${analysisId}`);
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to start analysis. Please try again.");
+    }
   };
 
   return (
@@ -40,14 +58,15 @@ const JobDescriptionPage = () => {
       <h1>Job Description</h1>
       <Card className="feature-card">
         <h2>Enter Job Details</h2>
-        {resumeUpload.status !== "success" ? (
+        {resumeUpload.status !== "success" && !localStorage.getItem("resume_id") && (
           <p className="status-text status-text--warning">
             Upload a resume first for the best match and suggestions.
           </p>
-        ) : null}
+        )}
         <p className="page-intro">
           Paste the role title and description so ARCC can tailor resume feedback to the job.
         </p>
+
         <form onSubmit={handleSubmit} noValidate>
           <Input
             id="job-title"
@@ -60,11 +79,11 @@ const JobDescriptionPage = () => {
             ariaInvalid={Boolean(errors.jobTitle)}
             ariaDescribedBy={errors.jobTitle ? "job-title-error" : undefined}
           />
-          {errors.jobTitle ? (
+          {errors.jobTitle && (
             <p className="field-error" id="job-title-error" role="alert">
               {errors.jobTitle}
             </p>
-          ) : null}
+          )}
 
           <div className="input-group">
             <label className="input-label" htmlFor="job-description">
@@ -83,21 +102,22 @@ const JobDescriptionPage = () => {
               aria-describedby={errors.description ? "job-description-error" : undefined}
             />
           </div>
-          {errors.description ? (
+          {errors.description && (
             <p className="field-error" id="job-description-error" role="alert">
               {errors.description}
             </p>
-          ) : null}
+          )}
 
           <div className="form-actions">
             <Button type="submit">Submit</Button>
           </div>
         </form>
-        {message ? (
-          <p className="status-text status-text--success" role="status">
+
+        {message && (
+          <p className="status-text status-text--info" role="status">
             {message}
           </p>
-        ) : null}
+        )}
       </Card>
     </div>
   );
