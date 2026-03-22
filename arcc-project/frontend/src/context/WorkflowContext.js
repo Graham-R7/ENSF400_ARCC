@@ -14,6 +14,8 @@ export function WorkflowProvider({ children }) {
     description: "",
   });
 
+  const [analysisId, setAnalysisId] = useState(null);
+
   const setResumeUploadResult = ({ fileName, parsedData }) => {
     setResumeUpload({
       status: "success",
@@ -39,8 +41,10 @@ export function WorkflowProvider({ children }) {
       clearResumeUpload,
       jobDetails,
       setJobDetails,
+      analysisId,
+      setAnalysisId,
     }),
-    [resumeUpload, jobDetails],
+    [resumeUpload, jobDetails, analysisId],
   );
 
   return <WorkflowContext.Provider value={value}>{children}</WorkflowContext.Provider>;
