@@ -152,6 +152,8 @@ def analyze_resume_job(resume_text: str, job_description: str) -> dict:
         "- Ignore generic words, stop words, and repeated common English words.\n"
         "- Merge your match_score with baseline overlap for stability.\n"
         "- Be generous with scoring; it's a hint, not a strict metric.\n"
+        "- Scoring should be holistic, not just keyword matching. Consider relevance and context.\n"
+        "- Scoring scale: 0-40 for unrelated resumes, 40-70 for somewhat relevant, 70-90 for good matches, 90-100 for near-perfect.\n"
         "Reply with ONE JSON object only, no markdown or prose.\n"
         'Schema: {"match_score": number 0-100, "missing_skills": string[], "suggestions": string[] (max 5)}.'
     )
